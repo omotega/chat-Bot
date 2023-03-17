@@ -1,6 +1,5 @@
 const express = require("express");
 const http = require("http");
-const path = require("path");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const { menu } = require("./utils/menu");
@@ -44,7 +43,7 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
   const botName = config.BOTNAME;
-  const orderHistory = [];
+  const orders = [];
   let switchExecuted = false;
 
   const botMessage = (message) => {
@@ -52,19 +51,19 @@ io.on("connection", (socket) => {
   };
 
   botMessage(
-    `Hello there!! \uD83D\uDE03, <br> Welcome to ${botName}..<br> What is you Name?`
+    `Hello there!, <br> Welcome to ${botName}..<br> What is you Name?`
   );
 
   socket.request.session.currentOrder = [];
-  let userName = "";
+  let username = "";
   let menuOption = "";
 
   socket.on("chat-message", (msg) => {
-    if (!userName) {
-      userName = msg;
-      io.emit("bot-message", formatmessage(userName, msg));
+    if (!username) {
+      username = msg;
+      io.emit("bot-message", formatmessage(username, msg));
       botMessage(
-        `Welcome,<b>${userName}</b>. <br /><br />
+        `Welcome,<b>${username}</b>. <br /><br />
          <b>press 1</b> To place an order,
         <br />To see your current order, <b> press 97</b>. 
         <br />To see your order history, <b>press 98</b>. 
@@ -72,7 +71,7 @@ io.on("connection", (socket) => {
         <br /><b>Press 0</b> to cancel.`
       );
     } else {
-      io.emit("bot-message", formatmessage(userName, msg));
+      io.emit("bot-message", formatmessage(username, msg));
       switch (msg) {
         case "1":
           menuOption = menu
@@ -85,6 +84,7 @@ io.on("connection", (socket) => {
           botMessage(
             ` The following is a list of the available items.: <ul>${menuOption}</ul>`
           );
+          console.log(menuOption)
           switchExecuted = true;
           break;
         case "2":
@@ -121,12 +121,12 @@ io.on("connection", (socket) => {
           }
           break;
         case "98":
-          if (!orderHistory.length) {
+          if (!orders.length) {
             botMessage(
               "Your order history is empty . Kindly place an order now..."
             );
           } else {
-            const orderHistoryText = orderHistory
+            const orderHistoryText = orders
               .map((order, index) => `Order ${index + 1}: ${order.food}<br/>`)
               .join("\n");
 
@@ -156,7 +156,7 @@ io.on("connection", (socket) => {
           break;
         default:
           botMessage(
-            "Invalid selection. Please try again \u{1F624}\u{1F612}\u{1F616}"
+            "Invalid selection. Please try again "
           );
       }
     }
