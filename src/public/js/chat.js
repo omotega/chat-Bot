@@ -3,24 +3,18 @@ var messages = document.getElementById("messages");
 const chat = document.getElementById('form');
 const inputField = document.getElementById('message');
 
-socket.on('bot-message', function (msg) {
-  // console.log(msg);
-  handleMessage(msg);
-  message.scrollTop = message.scrollHeight;
+
+socket.on("bot-message", data => {
+  console.log(data,'this is data')
+  let li = document.createElement("li");
+  let span = document.createElement("span");
+  var messages = document.getElementById("messages");
+  messages.appendChild(li).append(data);
+  console.log(messages)
+  messages.appendChild(span).append(`By ${data.username} at ${data.time}`);
 });
 
-const handleMessage = (msg) => {
-  const div = document.createElement('div');
-  div.classList.add('message');
-  div.innerHTML = `
-<p class="user">${msg.user} <span>${msg.time}</span></p>
-<p class="text">${msg.message}</p>
-`;
-  //append the div to the messages div
-  message.appendChild(div);
-};
 
-// Message submit
 chat.addEventListener('submit', (e) => {
   e.preventDefault();
 
@@ -34,9 +28,9 @@ chat.addEventListener('submit', (e) => {
   }
 
   if (message !== '') {
-        //sending Message to the Server
+        
         socket.emit('chat-message', message);
-        // Clear input
+      
         e.target.elements.inputMessage.value = '';
         e.target.elements.inputMessage.focus();
   }
