@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
     socket.emit("bot-message", formatmessage(botName, message));
   };
 
-  botMessage(`Hello there!, Welcome to ${botName}.. What is you Name?`);
+  botMessage(`Hello there!, Welcome to ${botName}.'What is you Name?`);
 
   socket.request.session.currentOrder = [];
   let username = "";
@@ -66,7 +66,7 @@ io.on("connection", (socket) => {
       switch (msg) {
         case "1":
           const option = Helper.formatMenu(menu);
-          botMessage('Select from the following');
+          botMessage("Select from the following");
           botMessage(option);
           switchExecuted = true;
           break;
@@ -82,7 +82,7 @@ io.on("connection", (socket) => {
             if (options) {
               socket.request.session.currentOrder.push(options);
               botMessage(
-                `${options.food} has been put in your shopping cart..Do you wish to add to your shopping cart? if so, please respond with the corresponding number.`
+                `${options.food} has been put in your shopping cart..Do you wish to add to your shopping cart? Press 1 to make a new Order ,press 98 to checkout Order,Press 9 to see mainmenu`
               );
               botMessage(Helper.formatMenu(menu));
             } else {
@@ -90,11 +90,14 @@ io.on("connection", (socket) => {
             }
           }
           break;
+        case "9": {
+          const option = Helper.formatMenu(menu);
+          botMessage(option);
+          break;
+        }
         case "97":
           if (socket.request.session.currentOrder.length === 0) {
-            botMessage(
-              "Cart is empty. Please place an order in the cart."
-            );
+            botMessage("Cart is empty. Please place an order in the cart.");
           } else {
             const currentOrder = socket.request.session.currentOrder
               .map((item) => item.food)
@@ -109,7 +112,10 @@ io.on("connection", (socket) => {
             );
           } else {
             const orderHistory = orders
-              .map((order, index) => `Order ${index + 1}: ${order.food} ${order.price}`)
+              .map(
+                (order, index) =>
+                  `Order ${index + 1}: ${order.food} ${order.price}`
+              )
               .join("\n");
             botMessage(`Your order history:` + orderHistory);
             console.log(orderHistory);
@@ -118,7 +124,7 @@ io.on("connection", (socket) => {
         case "99":
           if (socket.request.session.currentOrder.length === 0) {
             botMessage(
-              "Orders cannot be placed with an empty cart . Please add to your cart."
+              "Orders cannot be placed with an empty cart . Press 1 to see the mainmenu"
             );
           } else {
             orders.push(...socket.request.session.currentOrder);
@@ -128,11 +134,11 @@ io.on("connection", (socket) => {
           break;
         case "0":
           if (socket.request.session.currentOrder.length === 0) {
-            botMessage(" Cart empty! No order to cancel");
+            botMessage(" Cart empty! No order to cancel.");
           } else {
             socket.request.session.currentOrder = [];
             botMessage(
-              "Order cancelled! You can still place an order.Press 1 to see menu \u{1F60A}"
+              "Order cancelled! You can still place an order.Press 1 to see menu"
             );
           }
           break;
