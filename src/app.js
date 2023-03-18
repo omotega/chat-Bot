@@ -17,12 +17,13 @@ const Helper = require('./utils/helper')
 const app = express();
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server, {
-  cors: {
-    origin: "https://localhost:5750",
-    credentials: true,
-  },
-});
+
+const io = new Server(server)
+//   cors: {
+//     origin: `https://localhost:${Port}`,
+//     credentials: true,
+//   },
+// });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -31,8 +32,9 @@ app.use(express.static(__dirname + "/public"));
 app.use(cookieParser());
 
 // session-middleware
+const sessionSecret = config.SESSION_SECRET
 const sessionMiddleWare = session({
-  secret: config.SESSION_SECRET,
+  secret: sessionSecret,
   resave: false,
   saveUninitialized: true,
 });
