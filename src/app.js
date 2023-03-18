@@ -84,14 +84,14 @@ io.on("connection", (socket) => {
               botMessage(
                 `${options.food} has been put in your shopping cart..Do you wish to add to your shopping cart? Press 1 to make a new Order ,press 98 to checkout Order,Press 9 to see mainmenu`
               );
-              botMessage(Helper.formatMenu(menu));
             } else {
               botMessage("Invalid Input.");
             }
           }
           break;
         case "9": {
-          const option = Helper.formatMenu(menu);
+          let option = Helper.format(command);
+          botMessage('select from the following');
           botMessage(option);
           break;
         }
@@ -124,7 +124,7 @@ io.on("connection", (socket) => {
         case "99":
           if (socket.request.session.currentOrder.length === 0) {
             botMessage(
-              "Orders cannot be placed with an empty cart . Press 1 to see the mainmenu"
+              "Orders cannot be placed with an empty cart . Press 1 to see the mainmenu. Press 9 to see food available for order "
             );
           } else {
             orders.push(...socket.request.session.currentOrder);
