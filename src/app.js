@@ -2,12 +2,15 @@ const express = require("express");
 const http = require("http");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const { menu } = require("./utils/menu");
+const { menu,command } = require("./utils/menu");
 const formatmessage  = require("./utils/messages");
 require("dotenv").config();
 
 const  { config } = require("./config/config");
 const Port = config.PORT;
+
+const Helper = require('./utils/helper')
+
 
 
 // initializing app and socket.io
@@ -51,40 +54,29 @@ io.on("connection", (socket) => {
   };
 
   botMessage(
-    `Hello there!, <br> Welcome to ${botName}..<br> What is you Name?`
+    `Hello there!, Welcome to ${botName}.. What is you Name?`
   );
 
   socket.request.session.currentOrder = [];
   let username = "";
   let menuOption = "";
+  let formats = Helper.format(command);
 
   socket.on("chat-message", (msg) => {
+    console.log(msg);
     if (!username) {
       username = msg;
       io.emit("bot-message", formatmessage(username, msg));
-      botMessage(
-        `Welcome,<b>${username}</b>. <br /><br />
-         <b>press 1</b> To place an order,
-        <br />To see your current order, <b> press 97</b>. 
-        <br />To see your order history, <b>press 98</b>. 
-        <br />To checkout your order, <b>press 99</b>. 
-        <br /><b>Press 0</b> to cancel.`
-      );
+      botMessage(`welcome ${username}`);
+      botMessage(formats);
     } else {
       io.emit("bot-message", formatmessage(username, msg));
       switch (msg) {
         case "1":
-          menuOption = menu
-            .map(
-              (item) =>
-                `<li> Select<b> ${item.number}</b> for <b>${item.food}</b></li>`
-            )
-            .join("\n");
+          const options = Helper.formatMenu(menu)
 
-          botMessage(
-            ` The following is a list of the available items.: <ul>${menuOption}</ul>`
-          );
-          console.log(menuOption)
+          botMessage(options);
+          
           switchExecuted = true;
           break;
         case "2":
@@ -95,14 +87,14 @@ io.on("connection", (socket) => {
             botMessage("<b>Press 1 to see menu options.</b>");
           } else {
             const userInput = Number(msg);
-            const menu = menu.find((item) => item.id === userInput);
-            if (menu) {
-              socket.request.session.currentOrder.push(menu);
+            const options = menu.find((item) => item.number === userInput);
+            if (options) {
+              socket.request.session.currentOrder.push(options);
               botMessage(
-                `<b>${menu.food}</b> has been put in your shopping cart.. <br /><br />Do you wish to add to your shopping cart? if so, please respond with the corresponding number. <ul>${menuOption}</ul> <br /><br />If not, <b>hit 97</b> to view the items in your cart or <b>99</b> to check out your order.`
+                `${options.food}</b> has been put in your shopping cart..Do you wish to add to your shopping cart? if so, please respond with the corresponding number. <ul>${menuOption}</ul> <br /><br />If not, <b>hit 97</b> to view the items in your cart or <b>99</b> to check out your order.`
               );
             } else {
-              botMessage("<b>Invalid Input.</b>");
+              botMessage("Invalid Input.");
             }
           }
           break;
@@ -116,7 +108,7 @@ io.on("connection", (socket) => {
               .map((item) => item.food)
               .join(", ");
             botMessage(
-              `Your current order(s):<br/><br/> <b>${currentOrderText}</b>`
+              `Your current order(s):${currentOrderText}`
             );
           }
           break;
