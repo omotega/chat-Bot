@@ -39,7 +39,7 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected", socket.id);
+  console.log("a user connected");
   const botName = config.BOTNAME;
   const orders = [];
   let switchExecuted = false;
@@ -56,7 +56,6 @@ io.on("connection", (socket) => {
   let formats = Helper.format(command);
 
   socket.on("chat-message", (msg) => {
-    console.log(msg);
     if (!username) {
       username = msg;
       io.emit("bot-message", formatmessage(username, msg));
@@ -66,8 +65,9 @@ io.on("connection", (socket) => {
       io.emit("bot-message", formatmessage(username, msg));
       switch (msg) {
         case "1":
-          const options = Helper.formatMenu(menu);
-          botMessage(options);
+          const option = Helper.formatMenu(menu);
+          botMessage('Select from the following');
+          botMessage(option);
           switchExecuted = true;
           break;
         case "2":
@@ -75,15 +75,16 @@ io.on("connection", (socket) => {
         case "4":
         case "5":
           if (switchExecuted === false) {
-            botMessage("<b>Press 1 to see menu options.</b>");
+            botMessage("Press 1 to see menu options.");
           } else {
             const userInput = Number(msg);
             const options = menu.find((item) => item.number === userInput);
             if (options) {
               socket.request.session.currentOrder.push(options);
               botMessage(
-                `${options.food}</b> has been put in your shopping cart..Do you wish to add to your shopping cart? if so, please respond with the corresponding number. <ul>${menuOption}</ul> <br /><br />If not, <b>hit 97</b> to view the items in your cart or <b>99</b> to check out your order.`
+                `${options.food} has been put in your shopping cart..Do you wish to add to your shopping cart? if so, please respond with the corresponding number.`
               );
+              botMessage(Helper.formatMenu(menu));
             } else {
               botMessage("Invalid Input.");
             }
@@ -92,13 +93,13 @@ io.on("connection", (socket) => {
         case "97":
           if (socket.request.session.currentOrder.length === 0) {
             botMessage(
-              "Oops!! Cart is empty. Please place an order in the cart."
+              "Cart is empty. Please place an order in the cart."
             );
           } else {
-            const currentOrderText = socket.request.session.currentOrder
+            const currentOrder = socket.request.session.currentOrder
               .map((item) => item.food)
               .join(", ");
-            botMessage(`Your current order(s):${currentOrderText}`);
+            botMessage(`Your current order(s):${currentOrder}`);
           }
           break;
         case "98":
@@ -107,21 +108,21 @@ io.on("connection", (socket) => {
               "Your order history is empty . Kindly place an order now..."
             );
           } else {
-            const orderHistoryText = orders
-              .map((order, index) => `Order ${index + 1}: ${order.food}<br/>`)
+            const orderHistory = orders
+              .map((order, index) => `Order ${index + 1}: ${order.food} ${order.price}`)
               .join("\n");
-
-            botMessage(`Your order history: <br/><br/>${orderHistoryText}`);
+            botMessage(`Your order history:` + orderHistory);
+            console.log(orderHistory);
           }
           break;
         case "99":
           if (socket.request.session.currentOrder.length === 0) {
             botMessage(
-              "Oops!!! Orders cannot be placed with an empty cart . Please add to your shopping basket."
+              "Orders cannot be placed with an empty cart . Please add to your cart."
             );
           } else {
-            orderHistory.push(...socket.request.session.currentOrder);
-            botMessage("Order placed!!");
+            orders.push(...socket.request.session.currentOrder);
+            botMessage("Order placed");
             socket.request.session.currentOrder = [];
           }
           break;
@@ -131,12 +132,13 @@ io.on("connection", (socket) => {
           } else {
             socket.request.session.currentOrder = [];
             botMessage(
-              "Order cancelled! You can still place an order.<br /><br /> <b> Press 1</b> to see menu \u{1F60A}"
+              "Order cancelled! You can still place an order.Press 1 to see menu \u{1F60A}"
             );
           }
           break;
         default:
           botMessage("Invalid selection. Please try again ");
+          botMessage(formats);
       }
     }
   });
