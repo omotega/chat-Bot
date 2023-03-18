@@ -7,10 +7,10 @@ const command = [
 ]
 
 const menu = [
-  { number: 2, food: "sausage", price: 400 },
-  { number: 3, food: "ice-cream", price: 600 },
-  { number: 4, food: "jollof-rice and beef", price: 1700 },
-  { number: 5, food: " bottle-water", price: 800 },
+  { number: 2, food: "Sausage", price: 'N400' },
+  { number: 3, food: "Ice-Cream", price: 'N600' },
+  { number: 4, food: "Jollof-Rice and beef", price: 'N1700' },
+  { number: 5, food: " Bottle-Water", price: 'N800' },
 ];
 
 module.exports = {

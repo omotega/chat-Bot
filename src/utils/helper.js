@@ -1,16 +1,18 @@
 const { command,menu  } = require("./menu");
 
 class Helper {
+  
   static format(options) {
-    let msg = options.map((item) => {
+    let msg;
+    msg = options.map((item) => {
       return `${item.number}:${item.text}`;
-    });
-    return msg;
+    })
+    return msg
   }
 
   static formatMenu(options) {
     let msg = options.map((item) => {
-      return `${item.number}:${item.food}`;
+      return `${item.number}:${item.food} ${item.price}`;
     });
     return msg;
   }
