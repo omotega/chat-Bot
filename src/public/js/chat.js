@@ -1,4 +1,4 @@
-var socket = io("ws://localhost:5750");
+var socket = io();
 var messages = document.getElementById("messages");
 const chat = document.getElementById("form");
 const inputField = document.getElementById("message");
