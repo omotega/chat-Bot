@@ -6,7 +6,6 @@ const inputField = document.getElementById("message");
 socket.on("bot-message", (data) => {
   let li = document.createElement("li");
   let span = document.createElement("span");
-  let h1 = document.createElement('h1')
   var messages = document.getElementById("messages");
   if (Array.isArray(data.text)) {
     data.text.forEach((items) => {
@@ -19,6 +18,7 @@ socket.on("bot-message", (data) => {
   }
   messages.appendChild(li).append(data.text)
   console.log(data);
+  console.log(messages);
   
   messages.appendChild(span).append(`By ${data.username} at ${data.time}`);
 });
