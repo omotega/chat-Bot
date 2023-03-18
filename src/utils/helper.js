@@ -17,6 +17,6 @@ class Helper {
 
 }
 
-console.log(Helper.formatMenu(menu))
+
 
 module.exports = Helper;
