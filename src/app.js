@@ -2,37 +2,31 @@ const express = require("express");
 const http = require("http");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const { menu,command } = require("./utils/menu");
-const formatmessage  = require("./utils/messages");
+const cors = require("cors");
+const path = require("path");
+const { menu, command } = require("./utils/menu");
+const formatmessage = require("./utils/messages");
 require("dotenv").config();
 
-const  { config } = require("./config/config");
+const { config } = require("./config/config");
 const Port = config.PORT;
 
-const Helper = require('./utils/helper')
+const Helper = require("./utils/helper");
 
-
-
-// initializing app and socket.io
 const app = express();
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 
-const io = new Server(server)
-//   cors: {
-//     origin: `https://localhost:${Port}`,
-//     credentials: true,
-//   },
-// });
+const io = new Server(server);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
+app.use(cors());
 
-// session-middleware
-const sessionSecret = config.SESSION_SECRET
+const sessionSecret = config.SESSION_SECRET;
 const sessionMiddleWare = session({
   secret: sessionSecret,
   resave: false,
@@ -44,7 +38,6 @@ io.use((socket, next) => {
   return sessionMiddleWare(socket.request, socket.request.res, next);
 });
 
-// run when client connect
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
   const botName = config.BOTNAME;
@@ -55,9 +48,7 @@ io.on("connection", (socket) => {
     socket.emit("bot-message", formatmessage(botName, message));
   };
 
-  botMessage(
-    `Hello there!, Welcome to ${botName}.. What is you Name?`
-  );
+  botMessage(`Hello there!, Welcome to ${botName}.. What is you Name?`);
 
   socket.request.session.currentOrder = [];
   let username = "";
@@ -75,10 +66,8 @@ io.on("connection", (socket) => {
       io.emit("bot-message", formatmessage(username, msg));
       switch (msg) {
         case "1":
-          const options = Helper.formatMenu(menu)
-
+          const options = Helper.formatMenu(menu);
           botMessage(options);
-          
           switchExecuted = true;
           break;
         case "2":
@@ -109,9 +98,7 @@ io.on("connection", (socket) => {
             const currentOrderText = socket.request.session.currentOrder
               .map((item) => item.food)
               .join(", ");
-            botMessage(
-              `Your current order(s):${currentOrderText}`
-            );
+            botMessage(`Your current order(s):${currentOrderText}`);
           }
           break;
         case "98":
@@ -149,9 +136,7 @@ io.on("connection", (socket) => {
           }
           break;
         default:
-          botMessage(
-            "Invalid selection. Please try again "
-          );
+          botMessage("Invalid selection. Please try again ");
       }
     }
   });
