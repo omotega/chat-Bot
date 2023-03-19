@@ -19,6 +19,14 @@ e. Select 0 to cancel order
 5.  When a customer selects “97”, the bot should be able to return current order
 6.  When a customer selects “0”, the bot should cancel the order if there is.
 
+
+### Technologies Used
+1. Node.js
+2. Express.js
+3. Socket.IO
+4. Express-Session
+5. Moment.js
+
 ### Installation
 
 1. Clone the repo
@@ -37,6 +45,8 @@ e. Select 0 to cancel order
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
 
 ### Live Link
  
