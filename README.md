@@ -23,16 +23,15 @@ e. Select 0 to cancel order
 
 _Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+1. Clone the repo
    ```sh
-   git clonehttps://github.com/omotega/chat-Bot.git 
+   git clone https://github.com/omotega/chat-Bot.git 
    ```
-3. Install NPM packages
+2. Install NPM packages
    ```sh
    yarn install
    ```
-4. Enter your API in `config.js`
+3. Enter your API in `config.js`
    ```js
    const SESSION_SECRET = 'ENTER YOUR SESSION SECRET';
    const PORT = 'ENTER YOUR PORT NUMBER';
@@ -40,3 +39,8 @@ _Below is an example of how you can instruct your audience on installing and set
    ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+### Live Link
+ ```
+ https://restaurant-chatbot-7qrn.onrender.com/
+ ```
